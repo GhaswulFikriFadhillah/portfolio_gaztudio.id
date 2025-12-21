@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, PenTool, Layout, Image as ImageIcon, ArrowRight } from 'lucide-react';
+
+// ✅ IMPORT GAMBAR YANG BENAR (Pastikan file profil.jpg ada di folder src/assets/)
 import profileImage from '../assets/profil.jpg';
 
 // --- INLINE COMPONENTS ---
@@ -37,10 +39,10 @@ const RevealOnScroll = ({ children, delay = 0 }) => {
   );
 };
 
-// Updated Marquee: Full Width & Easy on Eyes
+// Updated Marquee: Full Width
 const Marquee = ({ text, direction = 'left' }) => {
   return (
-    <div className="relative z-20 my-12 w-full left-1/2 -ml-[50vw]">
+    <div className="relative z-20 my-12 w-screen left-1/2 -ml-[50vw]">
       <div className="overflow-hidden py-6 bg-[#c07a35] text-white border-y-4 border-[#0a0a0a] shadow-2xl transform -rotate-1 origin-center scale-[1.02]">
         <div className="flex whitespace-nowrap">
           <div className={`flex animate-marquee ${direction === 'right' ? 'direction-reverse' : ''}`}>
@@ -67,9 +69,6 @@ const Marquee = ({ text, direction = 'left' }) => {
     </div>
   );
 };
-
-// Placeholder Image (Gunakan import lokal jika file sudah tersedia)
-const profileImage = "src/assets/profil.jpg";
 
 // --- MAIN COMPONENT ---
 
@@ -191,6 +190,7 @@ export default function HomePage({
                     <div className="absolute inset-0 border-2 border-[#c07a35] translate-x-3 translate-y-3 z-0 rounded-sm group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500 opacity-80"></div>
                     
                     <div className="relative z-10 aspect-[4/5] overflow-hidden bg-[#141414] rounded-sm">
+                      {/* Menggunakan variabel profileImage yang sudah diimport */}
                       <img
                         src={profileImage}
                         alt="Ghaswul Fikri Fadhillah"
