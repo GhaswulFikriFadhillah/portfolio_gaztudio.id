@@ -40,7 +40,7 @@ const RevealOnScroll = ({ children, delay = 0 }) => {
 // Updated Marquee: Full Width & Easy on Eyes
 const Marquee = ({ text, direction = 'left' }) => {
   return (
-    <div className="relative z-20 my-12 w-screen left-1/2 -ml-[50vw]">
+    <div className="relative z-20 my-12 w-full left-1/2 -ml-[50vw]">
       <div className="overflow-hidden py-6 bg-[#c07a35] text-white border-y-4 border-[#0a0a0a] shadow-2xl transform -rotate-1 origin-center scale-[1.02]">
         <div className="flex whitespace-nowrap">
           <div className={`flex animate-marquee ${direction === 'right' ? 'direction-reverse' : ''}`}>
