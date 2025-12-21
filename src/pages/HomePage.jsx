@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, PenTool, Layout, Image as ImageIcon, ArrowRight } from 'lucide-react';
+import profileImage from '../assets/profil.jpg';
 
 // --- INLINE COMPONENTS ---
 
