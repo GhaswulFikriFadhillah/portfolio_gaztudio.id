@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, PenTool, Layout, Image as ImageIcon, ArrowRight } from 'lucide-react';
 
-// ✅ IMPORT GAMBAR YANG BENAR (Pastikan file profil.jpg ada di folder src/assets/)
-import profileImage from '../assets/profil.jpg';
+// ==========================================
+// PENTING: BACA PETUNJUK DI BAWAH INI
+// ==========================================
+
+// 1. SAAT DI LAPTOP (HAPUS TANDA KOMENTAR '//' DI BARIS BAWAH INI):
+import profileImage from 'src/assets/profil.jpg';
+
+// 2. UNTUK SEMENTARA (AGAR PREVIEW DISINI JALAN), KITA PAKAI INI:
+// (Nanti di laptop, baris di bawah ini BOLEH DIHAPUS/KOMENTAR jika import di atas sudah aktif)
+// const profileImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80";
+
+// ==========================================
 
 // --- INLINE COMPONENTS ---
 
@@ -190,7 +200,7 @@ export default function HomePage({
                     <div className="absolute inset-0 border-2 border-[#c07a35] translate-x-3 translate-y-3 z-0 rounded-sm group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500 opacity-80"></div>
                     
                     <div className="relative z-10 aspect-[4/5] overflow-hidden bg-[#141414] rounded-sm">
-                      {/* Menggunakan variabel profileImage yang sudah diimport */}
+                      {/* Menggunakan variabel profileImage */}
                       <img
                         src={profileImage}
                         alt="Ghaswul Fikri Fadhillah"
