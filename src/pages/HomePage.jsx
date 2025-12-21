@@ -6,7 +6,7 @@ import { Menu, X, PenTool, Layout, Image as ImageIcon, ArrowRight } from 'lucide
 // ==========================================
 
 // 1. SAAT DI LAPTOP (HAPUS TANDA KOMENTAR '//' DI BARIS BAWAH INI):
-import profileImage from 'src/assets/profil.jpg';
+import profileImage from '../assets/profil.jpg';
 
 // 2. UNTUK SEMENTARA (AGAR PREVIEW DISINI JALAN), KITA PAKAI INI:
 // (Nanti di laptop, baris di bawah ini BOLEH DIHAPUS/KOMENTAR jika import di atas sudah aktif)
