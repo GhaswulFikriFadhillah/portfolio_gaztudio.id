@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { 
   Palette, 
   PenTool, 
@@ -21,69 +22,50 @@ import ProjectCard from './components/ProjectCard.jsx';
 import WorkOverview from './pages/WorkOverview.jsx';
 import ProjectDetail from './pages/ProjectDetail.jsx';
 import HomePage from './pages/HomePage.jsx';
+import AdminPage from './pages/AdminPage.jsx';
 
-export default function App() {
+// Import Services
+import { portfolioService } from './services/portfolioService.js';
+
+function AppContent() {
+  const navigate = useNavigate();
   const [cursorVariant, setCursorVariant] = useState("default");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [introComplete, setIntroComplete] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'work', 'project'
   const [pageTransition, setPageTransition] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projectsError, setProjectsError] = useState(null);
 
-  const projects = [
-    {
-      id: 1,
-      title: "Logo Collection",
-      category: "Logo Design",
-      year: "2023",
-      description: "Koleksi desain logo untuk berbagai project pribadi dan freelance awal. Fokus pada kesederhanaan, readability, dan karakter yang kuat untuk setiap brand.",
-      images: ["/placeholder1.jpg", "/placeholder2.jpg"],
-      technologies: ["Adobe Illustrator", "Photoshop"],
-      link: "#"
-    },
-    {
-      id: 2,
-      title: "Social Media Graphics",
-      category: "Instagram Design",
-      year: "2023",
-      description: "Desain grafis untuk platform sosial media dengan fokus pada engagement dan visual consistency. Termasuk feed design, stories, dan highlight covers.",
-      images: ["/placeholder3.jpg", "/placeholder4.jpg"],
-      technologies: ["Adobe Illustrator", "Canva", "Photoshop"],
-      link: "#"
-    },
-    {
-      id: 3,
-      title: "Event Posters",
-      category: "Poster Design",
-      year: "2022",
-      description: "Koleksi poster untuk berbagai acara dan kampanye. Menggabungkan typography yang menarik dengan elemen visual yang impactful untuk menarik perhatian.",
-      images: ["/placeholder5.jpg", "/placeholder6.jpg"],
-      technologies: ["Adobe Illustrator", "Photoshop", "InDesign"],
-      link: "#"
-    },
-    {
-      id: 4,
-      title: "Data Visualization",
-      category: "Infographics",
-      year: "2022",
-      description: "Infografis untuk menyampaikan informasi kompleks dengan cara yang mudah dipahami. Fokus pada clarity, hierarchy, dan visual appeal.",
-      images: ["/placeholder7.jpg", "/placeholder8.jpg"],
-      technologies: ["Adobe Illustrator", "Photoshop", "PowerPoint"],
-      link: "#"
-    },
-    {
-      id: 5,
-      title: "Presentation Templates",
-      category: "PPT Design",
-      year: "2022",
-      description: "Template presentasi yang profesional dan mudah digunakan. Dirancang untuk berbagai keperluan presentasi dengan konsistensi visual yang kuat.",
-      images: ["/placeholder9.jpg", "/placeholder10.jpg"],
-      technologies: ["PowerPoint", "Google Slides", "Adobe Illustrator"],
-      link: "#"
-    }
-  ];
+  // Load projects from Supabase
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setProjectsLoading(true);
+        setProjectsError(null);
+        console.log('Loading projects...');
+        const data = await portfolioService.getProjects();
+        console.log('Projects loaded:', data);
+        setProjects(data);
+      } catch (error) {
+        console.error('Failed to load projects:', error);
+        setProjectsError(error.message);
+        // Fallback to localStorage if Supabase fails
+        const saved = localStorage.getItem('portfolio_projects');
+        if (saved) {
+          console.log('Using localStorage fallback');
+          setProjects(JSON.parse(saved));
+        }
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
 
   useEffect(() => {
     // Show text after component mounts
@@ -99,7 +81,7 @@ export default function App() {
   const navigateToWork = () => {
     setPageTransition(true);
     setTimeout(() => {
-      setCurrentPage('work');
+      navigate('/work');
       setPageTransition(false);
     }, 500);
   };
@@ -108,7 +90,7 @@ export default function App() {
     setPageTransition(true);
     setTimeout(() => {
       setSelectedProject(project);
-      setCurrentPage('project');
+      navigate('/project');
       setPageTransition(false);
     }, 500);
   };
@@ -116,14 +98,18 @@ export default function App() {
   const navigateBack = () => {
     setPageTransition(true);
     setTimeout(() => {
-      if (currentPage === 'project') {
-        setCurrentPage('work');
+      if (window.location.pathname === '/project') {
+        navigate('/work');
         setSelectedProject(null);
       } else {
-        setCurrentPage('home');
+        navigate('/');
       }
       setPageTransition(false);
     }, 500);
+  };
+
+  const navigateToAdmin = () => {
+    navigate('/admin');
   };
 
   const textEnter = () => setCursorVariant("hover");
@@ -165,38 +151,67 @@ export default function App() {
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-black animate-slide-up"></div>
       </div>
 
-      {/* Render Current Page */}
-      {currentPage === 'home' && (
-        <HomePage
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-          cursorVariant={cursorVariant}
-          textEnter={textEnter}
-          textLeave={textLeave}
-          navigateToWork={navigateToWork}
-        />
-      )}
-
-      {currentPage === 'work' && (
-        <WorkOverview
-          projects={projects}
-          onBack={navigateBack}
-          onProjectClick={navigateToProject}
-          textEnter={textEnter}
-          textLeave={textLeave}
-        />
-      )}
-
-      {currentPage === 'project' && (
-        <ProjectDetail
-          project={selectedProject}
-          onBack={navigateBack}
-          textEnter={textEnter}
-          textLeave={textLeave}
-        />
-      )}
+      <Routes>
+        <Route path="/" element={
+          <HomePage
+            isMenuOpen={isMenuOpen}
+            setIsMenuOpen={setIsMenuOpen}
+            cursorVariant={cursorVariant}
+            textEnter={textEnter}
+            textLeave={textLeave}
+            navigateToWork={navigateToWork}
+            navigateToAdmin={navigateToAdmin}
+          />
+        } />
+        <Route path="/work" element={
+          projectsLoading ? (
+            <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c07a35] mx-auto mb-4"></div>
+                <p>Loading portfolio...</p>
+                {projectsError && (
+                  <p className="text-red-400 text-sm mt-2">Error: {projectsError}</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <WorkOverview
+              projects={projects}
+              onBack={navigateBack}
+              onProjectClick={navigateToProject}
+              textEnter={textEnter}
+              textLeave={textLeave}
+            />
+          )
+        } />
+        <Route path="/project" element={
+          <ProjectDetail
+            project={selectedProject}
+            onBack={navigateBack}
+            textEnter={textEnter}
+            textLeave={textLeave}
+          />
+        } />
+        <Route path="/admin" element={
+          <AdminPage
+            onBack={navigateBack}
+            textEnter={textEnter}
+            textLeave={textLeave}
+            projects={projects}
+            setProjects={setProjects}
+          />
+        } />
+      </Routes>
 
       <CustomCursor cursorVariant={cursorVariant} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }

@@ -87,8 +87,26 @@ export default function HomePage({
   setIsMenuOpen,
   textEnter,
   textLeave,
-  navigateToWork
+  navigateToWork,
+  navigateToAdmin
 }) {
+  const [keySequence, setKeySequence] = useState('');
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      const newSequence = (keySequence + e.key.toLowerCase()).slice(-5);
+      setKeySequence(newSequence);
+      
+      // Secret sequence: 'admin'
+      if (newSequence === 'admin') {
+        if (navigateToAdmin) navigateToAdmin();
+        setKeySequence('');
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+    return () => window.removeEventListener('keypress', handleKeyPress);
+  }, [keySequence, navigateToAdmin]);
   return (
     <>
       {/* Background Noise & Grid */}
