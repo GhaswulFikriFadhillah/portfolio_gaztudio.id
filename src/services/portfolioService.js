@@ -36,6 +36,7 @@ export const portfolioService = {
           description: project.description,
           technologies: project.technologies,
           image: project.image,
+          image2: project.image2,
           images: project.images || [],
           link: project.link
         }])
@@ -67,6 +68,7 @@ export const portfolioService = {
           description: project.description,
           technologies: project.technologies,
           image: project.image,
+          image2: project.image2,
           images: project.images || [],
           link: project.link
         })
@@ -107,4 +109,40 @@ export const portfolioService = {
       throw error
     }
   },
+
+  // Upload image to Supabase Storage
+  async uploadImage(file) {
+    try {
+      console.log('Uploading image:', file.name)
+
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      const filePath = `portfolio-images/${fileName}`
+
+      // Upload file to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('portfolio-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (error) {
+        console.error('Supabase storage error:', error)
+        throw error
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('portfolio-images')
+        .getPublicUrl(filePath)
+
+      console.log('Image uploaded successfully:', publicUrl)
+      return publicUrl
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      throw error
+    }
+  }
 }

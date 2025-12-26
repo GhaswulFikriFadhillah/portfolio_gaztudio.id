@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS projects (
   description TEXT,
   technologies TEXT[],
   image TEXT,
+  image2 TEXT, -- Secondary image field
   images TEXT[],
   link TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -17,6 +18,9 @@ CREATE TABLE IF NOT EXISTS projects (
 
 -- Step 2: Enable Row Level Security
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+
+-- Step 2.1: Add image2 column if it doesn't exist (for existing tables)
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS image2 TEXT;
 
 -- Step 3: Create policies for public access
 -- Drop existing policies if they exist
